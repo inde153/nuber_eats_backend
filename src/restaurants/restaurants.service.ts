@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRestaurantDto } from './dtos/create-restaurant.dto';
+import { updateRestaurantDto } from './dtos/update-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 
 @Injectable()
@@ -28,5 +29,9 @@ export class RestaurantService {
     //typeORM과 DTO를 사용하는 장점임
     const newRestaurant = this.restaurants.create(createRestaurantDto);
     return this.restaurants.save(newRestaurant);
+  }
+
+  updateRestaurant({ id, data }: updateRestaurantDto) {
+    return this.restaurants.update(id, { ...data });
   }
 }
