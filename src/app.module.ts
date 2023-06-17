@@ -6,6 +6,9 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { Users } from './users/entities/users.entity';
 
 @Module({
   imports: [
@@ -34,13 +37,17 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [Restaurant],
+      // entities: [Restaurant],
+      entities: [Users],
     }),
+    // 그래프QL 스키마가 하나도 없는 경우 Query root type must be provided 에러 발생 주석처리 필요
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
     }),
-    RestaurantsModule,
+    // RestaurantsModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
