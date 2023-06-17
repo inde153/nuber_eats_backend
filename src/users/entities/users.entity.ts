@@ -1,22 +1,48 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { InternalServerErrorException } from '@nestjs/common';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 
-type UsersRole = 'client' | 'owner' | 'delivery';
+enum UserRole {
+  Owner,
+  Client,
+  Delivery,
+}
+
+registerEnumType(UserRole, { name: 'UserRole' });
 
 @InputType()
 @ObjectType({ isAbstract: true }) //어노테이션의 순서도 중요하다.
 @Entity()
-export class Users extends CoreEntity {
+export class User extends CoreEntity {
   @Column()
   @Field((type) => String)
-  email: String;
+  @IsEmail()
+  email: string;
 
   @Column()
   @Field((type) => String)
-  password: String;
+  password: string;
 
-  @Column()
-  @Field((type) => String)
-  role: UsersRole;
+  @Column({ type: 'enum', enum: UserRole })
+  @Field((type) => UserRole)
+  @IsEnum(UserRole)
+  role: UserRole;
+
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    try {
+      this.password = await bcrypt.hash(this.password, 10);
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
+  }
 }
