@@ -8,7 +8,7 @@ import { UsersService } from './users.service';
 @Module({
   //유저를 추가해주고
   imports: [TypeOrmModule.forFeature([User])],
-  //해당 유저에 공급한다.
+  //공급한다.
   providers: [UsersResolver, UsersService],
 })
 export class UsersModule {}
