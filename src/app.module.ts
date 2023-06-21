@@ -49,9 +49,10 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     // RestaurantsModule,
     JwtModule.forRoot({
+      //<<-- forRoot는 다이나믹 모듈인데 결과적으로는 정적인 모듈이 된다.
       privateKey: process.env.PRIVATE_KEY,
     }),
-    UsersModule,
+    UsersModule, //<<-- static 모듈
     CommonModule,
   ],
   controllers: [],

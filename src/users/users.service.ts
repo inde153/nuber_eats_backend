@@ -10,10 +10,8 @@ import { User } from './entities/users.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly user: Repository<User>,
-    private readonly jwt: JwtService,
-  ) {
-    this.jwt.hello();
-  }
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createAccount({
     email,
@@ -56,10 +54,10 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
-      // const token = this.jwt.sign()
+      const token = this.jwtService.sign({ id: user.id });
       return {
         ok: true,
-        token: 'lalalalala',
+        token,
       };
     } catch (error) {
       return {
