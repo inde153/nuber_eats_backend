@@ -3,11 +3,11 @@ import { MutationOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/users.entity';
 
 @InputType()
-export class CreateAccountInput extends PickType(User, [
-  'email',
-  'password',
-  'role',
-]) {}
+export class CreateAccountInput extends PickType(
+  User,
+  ['email', 'password', 'role'],
+  InputType,
+) {}
 
 @ObjectType()
 export class CreateAccountOutput extends MutationOutput {}

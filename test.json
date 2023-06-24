@@ -1,0 +1,28 @@
+{
+  "__validationErrors": [],
+  "_queryType": "Query",
+  "_mutationType": "Mutation",
+  "_subscriptionType": null,
+  "_directives": ["@include", "@skip", "@deprecated", "@specifiedBy"],
+  "_typeMap": {
+    "CreateAccountOutput": "CreateAccountOutput",
+    "String": "String",
+    "Boolean": "Boolean",
+    "LoginOutput": "LoginOutput",
+    "Query": "Query",
+    "Mutation": "Mutation",
+    "CreateAccountInput": "CreateAccountInput",
+    "UserRole": "UserRole",
+    "LoginInput": "LoginInput",
+    "__Schema": "__Schema",
+    "__Type": "__Type",
+    "__TypeKind": "__TypeKind",
+    "__Field": "__Field",
+    "__InputValue": "__InputValue",
+    "__EnumValue": "__EnumValue",
+    "__Directive": "__Directive",
+    "__DirectiveLocation": "__DirectiveLocation"
+  },
+  "_subTypeMap": {},
+  "_implementationsMap": {}
+}

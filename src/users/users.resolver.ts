@@ -38,8 +38,12 @@ export class UsersResolver {
     }
   }
 
-  @Query((returns) => Boolean)
-  hi() {
-    return true;
-  }
+  // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
+  // 에러 해결 방법은 https://darrengwon.tistory.com/969 사이트의 @InputType({ isAbstract: true })
+  @Query((returns) => User)
+  me() {}
+  // @Query((returns) => User)
+  // hi(): boolean {
+  //   return true;
+  // }
 }
