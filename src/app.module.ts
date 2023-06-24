@@ -1,15 +1,20 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/users.entity';
 import { JwtModule } from './jwt/jwt.module';
+import { jwtMiddleware } from './jwt/jwt.middleware';
 
 @Module({
   imports: [
@@ -49,12 +54,22 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     // RestaurantsModule,
     JwtModule.forRoot({
+      //<<-- forRoot는 다이나믹 모듈인데 결과적으로는 정적인 모듈이 된다.
       privateKey: process.env.PRIVATE_KEY,
     }),
-    UsersModule,
+    UsersModule, //<<-- static 모듈
     CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(jwtMiddleware).forRoutes({
+      path: '/graphql',
+      method: RequestMethod.ALL,
+    });
+  }
+}
+
+//forRoutes 대신 exclude 는 특정 경로만 막을 때

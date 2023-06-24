@@ -9,11 +9,9 @@ import { User } from './entities/users.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly user: Repository<User>,
-    private readonly jwt: JwtService,
-  ) {
-    this.jwt.hello();
-  }
+    @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createAccount({
     email,
@@ -22,7 +20,7 @@ export class UsersService {
   }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
     try {
       //check new user
-      const exists = await this.user.findOne({ where: { email } });
+      const exists = await this.users.findOne({ where: { email } });
 
       if (exists) {
         //make error
@@ -30,7 +28,7 @@ export class UsersService {
         return { ok: false, error: 'There is a user with that email already' };
       }
       //create user & hash the password
-      await this.user.save(this.user.create({ email, password, role }));
+      await this.users.save(this.users.create({ email, password, role }));
       return { ok: true };
     } catch (error) {
       return { ok: false, error: "Couldn't create account" };
@@ -42,7 +40,7 @@ export class UsersService {
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.user.findOne({ where: { email } });
+      const user = await this.users.findOne({ where: { email } });
       if (!user) {
         return {
           ok: false,
@@ -56,10 +54,10 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
-      // const token = this.jwt.sign()
+      const token = this.jwtService.sign({ id: user.id });
       return {
         ok: true,
-        token: 'lalalalala',
+        token,
       };
     } catch (error) {
       return {

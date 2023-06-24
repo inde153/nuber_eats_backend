@@ -8,14 +8,9 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
 
-@Resolver(() => User)
+@Resolver((of) => User)
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
-
-  @Query((returns) => Boolean)
-  hi(): boolean {
-    return true;
-  }
 
   @Mutation((returns) => CreateAccountOutput)
   async createAccount(
@@ -41,5 +36,10 @@ export class UsersResolver {
         error,
       };
     }
+  }
+
+  @Query((returns) => Boolean)
+  hi() {
+    return true;
   }
 }
