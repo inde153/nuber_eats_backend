@@ -8,7 +8,7 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
 
-@Resolver(() => User)
+@Resolver((of) => User)
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
 
@@ -37,4 +37,13 @@ export class UsersResolver {
       };
     }
   }
+
+  // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
+  // 에러 해결 방법은 https://darrengwon.tistory.com/969 사이트의 @InputType({ isAbstract: true })
+  @Query((returns) => User)
+  me() {}
+  // @Query((returns) => User)
+  // hi(): boolean {
+  //   return true;
+  // }
 }

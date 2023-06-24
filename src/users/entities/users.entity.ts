@@ -18,7 +18,7 @@ enum UserRole {
 
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType()
+@InputType({ isAbstract: true })
 @ObjectType({ isAbstract: true }) //어노테이션의 순서도 중요하다.
 @Entity()
 export class User extends CoreEntity {
