@@ -6,11 +6,11 @@ import {
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 
 import { User } from './entities/users.entity';
-import { UsersService } from './users.service';
+import { UserService } from './users.service';
 
 @Resolver((of) => User)
-export class UsersResolver {
-  constructor(private readonly userService: UsersService) {}
+export class UserResolver {
+  constructor(private readonly userService: UserService) {}
 
   @Mutation((returns) => CreateAccountOutput)
   async createAccount(
