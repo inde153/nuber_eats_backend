@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -39,9 +39,15 @@ export class UserResolver {
   }
 
   // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
-  // 에러 해결 방법은 https://darrengwon.tistory.com/969 사이트의 @InputType({ isAbstract: true })
+  // 에러 해결 방법은 https://darrengwon.tistory.com/969 Entity파일의 @InputType({ isAbstract: true }) 설정
   @Query((returns) => User)
-  me() {}
+  me(@Context() context) {
+    if (!context.user) {
+      return;
+    } else {
+      return context.user;
+    }
+  }
   // @Query((returns) => User)
   // hi(): boolean {
   //   return true;
