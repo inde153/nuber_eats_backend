@@ -1,4 +1,7 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -41,12 +44,11 @@ export class UserResolver {
   // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
   // 에러 해결 방법은 https://darrengwon.tistory.com/969 Entity파일의 @InputType({ isAbstract: true }) 설정
   @Query((returns) => User)
-  me(@Context() context) {
-    if (!context.user) {
-      return;
-    } else {
-      return context.user;
-    }
+  //guard가 graphql context를 찾는다.
+  @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
+  me(@AuthUser() authUser: User) {
+    //데코레이터는 value를 return한다.
+    return authUser;
   }
   // @Query((returns) => User)
   // hi(): boolean {

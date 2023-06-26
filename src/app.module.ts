@@ -14,6 +14,7 @@ import { CommonModule } from './common/common.module';
 import { User } from './users/entities/users.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { jwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -50,6 +51,9 @@ import { jwtMiddleware } from './jwt/jwt.middleware';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      //apollo server나 graphql의 context는 모든 resolver에 정보를 보낼 수 있는 프로퍼티다.
+      //context에서 함수를 만들면 request object를 준다.
+      //jwtmiddleware를 거치고 오브젝트를 보낸다.
       context: ({ req }) => ({ user: req['user'] }),
     }),
     // RestaurantsModule,
@@ -58,7 +62,6 @@ import { jwtMiddleware } from './jwt/jwt.middleware';
       privateKey: process.env.PRIVATE_KEY,
     }),
     UsersModule, //<<-- static 모듈
-    CommonModule,
   ],
   controllers: [],
   providers: [],
