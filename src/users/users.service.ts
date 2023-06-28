@@ -91,7 +91,7 @@ export class UserService {
     if (email) {
       user.email = email;
       (user.verified = false),
-        await this.verification.save(this.verification.create)({ user });
+        await this.verification.save(this.verification.create({ user }));
     }
     if (password) {
       user.password = password;
