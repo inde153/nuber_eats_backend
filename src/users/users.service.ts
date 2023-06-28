@@ -6,11 +6,14 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/users.entity';
+import { Verification } from './entities/verification.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verification: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -25,13 +28,21 @@ export class UserService {
 
       if (exists) {
         //make error
-
         return { ok: false, error: 'There is a user with that email already' };
       }
       //create user & hash the password
-      await this.users.save(this.users.create({ email, password, role }));
+      const user = await this.users.save(
+        this.users.create({ email, password, role }),
+      );
+
+      await this.verification.save(
+        this.verification.create({
+          user,
+        }),
+      );
       return { ok: true };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: "Couldn't create account" };
     }
   }
@@ -79,6 +90,8 @@ export class UserService {
     const user = await this.users.findOne({ where: { id: userId } });
     if (email) {
       user.email = email;
+      (user.verified = false),
+        await this.verification.save(this.verification.create)({ user });
     }
     if (password) {
       user.password = password;

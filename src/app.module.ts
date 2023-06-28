@@ -15,6 +15,7 @@ import { User } from './users/entities/users.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { jwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
@@ -45,7 +46,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
       // entities: [Restaurant],
-      entities: [User],
+      entities: [User, Verification],
     }),
     // 그래프QL 스키마가 하나도 없는 경우 Query root type must be provided 에러 발생 주석처리 필요
     GraphQLModule.forRoot({
