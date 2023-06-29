@@ -13,7 +13,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     @InjectRepository(Verification)
-    private readonly verification: Repository<Verification>,
+    private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -35,8 +35,8 @@ export class UserService {
         this.users.create({ email, password, role }),
       );
 
-      await this.verification.save(
-        this.verification.create({
+      await this.verifications.save(
+        this.verifications.create({
           user,
         }),
       );
@@ -91,11 +91,26 @@ export class UserService {
     if (email) {
       user.email = email;
       (user.verified = false),
-        await this.verification.save(this.verification.create({ user }));
+        await this.verifications.save(this.verifications.create({ user }));
     }
     if (password) {
       user.password = password;
     }
     return this.users.save(user);
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    const verification = await this.verifications.findOne({
+      where: { code },
+      relations: ['user'],
+      // loadRelationIds: true, 해당 코드는 관계되어있는 id를 가져 온다.
+    });
+
+    if (verification) {
+      verification.user.verified = true;
+      console.log(verification.user);
+      this.users.save(verification.user);
+    }
+    return false;
   }
 }
