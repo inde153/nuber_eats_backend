@@ -109,7 +109,11 @@ export class UserService {
 
     if (verification) {
       verification.user.verified = true;
+<<<<<<< HEAD
 
+=======
+      console.log(verification.user);
+>>>>>>> 42e1847a40dd7d673aa163e76cba29f253d28481
       this.users.save(verification.user);
     }
     return false;
