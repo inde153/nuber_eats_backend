@@ -22,37 +22,23 @@ export class UserResolver {
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
-    try {
-      return this.userService.createAccount(createAccountInput);
-    } catch (err) {
-      return {
-        ok: false,
-        error: err,
-      };
-    }
+    return this.userService.createAccount(createAccountInput);
   }
 
   @Mutation((returns) => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-    try {
-      return this.userService.login(loginInput);
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
+    return this.userService.login(loginInput);
   }
 
   // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
   // 에러 해결 방법은 https://darrengwon.tistory.com/969 Entity파일의 @InputType({ isAbstract: true }) 설정
-  @Query((returns) => User)
+  // @Query((returns) => User)
   //guard가 graphql context를 찾는다.
-  @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
-  me(@AuthUser() authUser: User) {
-    //데코레이터는 value를 return한다.
-    return authUser;
-  }
+  // @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
+  // me(@AuthUser() authUser: User) {
+  //데코레이터는 value를 return한다.
+  //   return authUser;
+  // }
   // @Query((returns) => User)
   // hi(): boolean {
   //   return true;
@@ -62,21 +48,7 @@ export class UserResolver {
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
-    try {
-      const user = await this.userService.findById(userProfileInput.userId);
-      if (!user) {
-        throw Error();
-      }
-      return {
-        ok: Boolean(user),
-        user,
-      };
-    } catch (err) {
-      return {
-        ok: false,
-        error: 'User Not Found',
-      };
-    }
+    return this.userService.findById(userProfileInput.userId);
   }
 
   @UseGuards(AuthGuard)
@@ -85,21 +57,13 @@ export class UserResolver {
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
-    try {
-      await this.userService.editProfile(authUser['id'], editProfileInput);
-      return {
-        ok: true,
-      };
-    } catch (err) {
-      return {
-        ok: false,
-        error: err,
-      };
-    }
+    return this.userService.editProfile(authUser['id'], editProfileInput);
   }
 
   @Mutation((returns) => VerifyEmailOutput)
-  verifyEmail(@Args('input') { code }: VerifyEmailInput) {
-    this.userService.verifyEmail(code);
+  async verifyEmail(
+    @Args('input') { code }: VerifyEmailInput,
+  ): Promise<VerifyEmailOutput> {
+    return this.userService.verifyEmail(code);
   }
 }

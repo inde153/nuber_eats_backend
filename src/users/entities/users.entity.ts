@@ -56,9 +56,10 @@ export class User extends CoreEntity {
   @BeforeUpdate()
   async checkPassword(password: string): Promise<boolean> {
     try {
-      console.log(password, this.password);
-      const ok = await bcrypt.compare(password, this.password);
-      return ok;
+      if (this.password) {
+        const ok = await bcrypt.compare(password, this.password);
+        return ok;
+      }
     } catch (err) {
       console.log(err);
       throw new InternalServerErrorException();
