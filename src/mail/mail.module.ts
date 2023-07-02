@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { MailModuleOptions } from './mail.interfaces';
+import { MailService } from './mail.service';
 
 @Module({})
 export class MailModule {
@@ -16,8 +17,9 @@ export class MailModule {
           provide: CONFIG_OPTIONS, //공급해줄 이름
           useValue: options, // 공급해줄 값
         },
+        MailService,
       ],
-      exports: [], //노출 시켜줄 곳
+      exports: [MailService], //노출 시켜줄 곳
     };
   }
 }
