@@ -9,6 +9,7 @@ import { VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/users.entity';
 import { Verification } from './entities/verification.entity';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async createAccount({

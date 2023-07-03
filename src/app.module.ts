@@ -73,8 +73,8 @@ import { MailModule } from './mail/mail.module';
     }), //<<-- static 모듈
     UsersModule,
   ],
-  controllers: [],
-  providers: [],
+  // controllers: [],
+  // providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
