@@ -17,6 +17,7 @@ import { jwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { RequestLoggerMiddleware } from './common/middleware';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ export class AppModule implements NestModule {
       path: '/graphql',
       method: RequestMethod.POST,
     });
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
   }
 }
 

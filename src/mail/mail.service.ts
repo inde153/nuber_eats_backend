@@ -8,43 +8,39 @@ import { EmailVars, MailModuleOptions } from './mail.interfaces';
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {
-    this.sendEmail('testing', 'test', [
-      { key: 'code', value: 'gmdskg' },
-      { key: 'username', value: 'gmdsdsakg' },
-    ]);
-  }
+  ) {}
 
   private async sendEmail(
     subject: string,
-    templateName: string = 'verify email',
-    emailVars: EmailVars[],
     to: string = 'inde456@naver.com',
+    templateName: string = 'verify_email',
+    emailVars: EmailVars[],
   ) {
+    const formData = new FormData();
+    formData.append('from', `Nuber eats<mailgun@${this.options.domain}`);
+    formData.append('to', to);
+    formData.append('subject', subject);
+    formData.append('template', templateName);
+    emailVars.forEach((ele) => formData.append(`v:${ele.key}`, ele.value));
     try {
-      const formData = new FormData();
-      formData.append('from', `Nuber eats <mailgun@${this.options.domain}`);
-      formData.append('to', to);
-      formData.append('subject', subject);
-      formData.append('template', templateName);
-      formData.append('v:code', 'asas');
-      formData.append('v:username', 'inde');
-      emailVars.forEach((ele) => formData.append(ele.key, ele.value));
-      const response = await got(
-        `https://api.mailgun.net/v3/${this.options.domain}/messages`,
-        {
-          headers: {
-            Authorization: `Basic ${Buffer.from(
-              `api:${this.options.apiKey}`,
-            ).toString('base64')}`,
-          },
-          method: 'POST',
-          body: formData,
+      await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(
+            `api:${this.options.apiKey}`,
+          ).toString('base64')}`,
         },
-      );
-      console.log(response.body);
+        method: 'POST',
+        body: formData,
+      });
     } catch (err) {
       console.log(err);
     }
+  }
+
+  sendVerificationEmail(email: string, code: string) {
+    this.sendEmail('Verify Your Email', 'inde456@naver.com', 'verify_email', [
+      { key: 'code', value: code },
+      { key: 'username', value: email },
+    ]);
   }
 }

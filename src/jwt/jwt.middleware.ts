@@ -20,7 +20,9 @@ export class jwtMiddleware implements NestMiddleware {
           const user = await this.userService.findById(decoded['id']);
           req['user'] = user;
         }
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
     }
     next();
   }
