@@ -18,6 +18,8 @@ import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { RequestLoggerMiddleware } from './common/middleware';
+import { Category } from './restaurants/entities/category.entity';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
 
 @Module({
   imports: [
@@ -51,7 +53,7 @@ import { RequestLoggerMiddleware } from './common/middleware';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
       // entities: [Restaurant],
-      entities: [User, Verification],
+      entities: [User, Verification, Restaurant, Category],
     }),
     // 그래프QL 스키마가 하나도 없는 경우 Query root type must be provided 에러 발생 주석처리 필요
     GraphQLModule.forRoot({
