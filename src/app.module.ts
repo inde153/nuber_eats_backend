@@ -20,6 +20,7 @@ import { MailModule } from './mail/mail.module';
 import { RequestLoggerMiddleware } from './common/middleware';
 import { Category } from './restaurants/entities/category.entity';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }), //<<-- static 모듈
     UsersModule,
+    RestaurantsModule,
   ],
   // controllers: [],
   // providers: [],

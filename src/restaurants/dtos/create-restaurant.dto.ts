@@ -7,6 +7,6 @@ import { Restaurant } from '../entities/restaurant.entity';
 export class CreateRestaurantDto extends OmitType(
   Restaurant,
   ['id'],
-  InputType,
+
   //타입 오버라이딩 해당 옵션 사용하지 않을 경우 부모 클래스 타입 데코레이터 가져 옴 다른 방법으로는 부모 클래스에 해당 옵션과 isAbstract true필요
 ) {}

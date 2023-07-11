@@ -106,6 +106,7 @@ export class UserService {
   ): Promise<EditProfileOutput> {
     try {
       const user = await this.users.findOne({ where: { id: userId } });
+      console.log(user);
       if (email) {
         user.email = email;
         user.verified = false;
