@@ -28,11 +28,13 @@ export class Restaurant extends CoreEntity {
   })
   category: Category;
 
-  @Field((type) => User, { nullable: true })
-  @ManyToOne((type) => User, (user) => user.restaurants, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @Field((type) => String)
+  @Column()
+  @IsString()
+  address: string;
+
+  @Field((type) => User)
+  @ManyToOne((type) => User, (user) => user.restaurants)
   owner: User;
 }
 

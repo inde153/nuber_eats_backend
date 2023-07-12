@@ -32,13 +32,13 @@ export class UserResolver {
 
   // "Error: Schema must contain uniquely named types but contains multiple types named 'User'"
   // 에러 해결 방법은 https://darrengwon.tistory.com/969 Entity파일의 @InputType({ isAbstract: true }) 설정
-  // @Query((returns) => User)
+  @Query((returns) => User)
   //guard가 graphql context를 찾는다.
-  // @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
-  // me(@AuthUser() authUser: User) {
-  //데코레이터는 value를 return한다.
-  //   return authUser;
-  // }
+  @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
+  me(@AuthUser() authUser: User) {
+    // 데코레이터는 value를 return한다.
+    return authUser;
+  }
   // @Query((returns) => User)
   // hi(): boolean {
   //   return true;

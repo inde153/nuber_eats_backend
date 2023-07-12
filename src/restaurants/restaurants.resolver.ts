@@ -1,6 +1,12 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateRestaurantDto } from './dtos/create-restaurant.dto';
-import { updateRestaurantDto } from './dtos/update-restaurant.dto';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { User } from 'src/users/entities/users.entity';
+import {
+  CreateRestauranInput,
+  CreateRestauranOutput,
+} from './dtos/create-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
 
@@ -9,41 +15,21 @@ import { RestaurantService } from './restaurants.service';
 export class RestaurantResolver {
   //constructor의존성 주입
   constructor(private readonly restaurantService: RestaurantService) {}
-  @Query((returns) => [Restaurant])
-  restaurants(): Promise<Restaurant[]> {
-    return this.restaurantService.getAll();
-  }
 
   /** 레스토랑 생성
-   * @param createRestaurantDto
+   * @param createRestauranInput
    */
-  @Mutation((returns) => Boolean)
+  @UseGuards(AuthGuard)
+  @Mutation((returns) => CreateRestauranOutput)
   async createRestaurant(
-    @Args('input') createRestaurantDto: CreateRestaurantDto,
-  ): Promise<boolean> {
+    @AuthUser() authUser: User,
+    @Args('input') createRestauranInput: CreateRestauranInput,
+  ): Promise<CreateRestauranOutput> {
     //async 사용시 타입 옆에 Promise 필요
-    try {
-      await this.restaurantService.createRestaurant(createRestaurantDto);
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  }
 
-  /** 레스토랑 업데이트
-   * @param updateRestaurantDto
-   */
-  @Mutation((returns) => Boolean)
-  async updateRestaurant(
-    @Args('input') updateRestaurantDto: updateRestaurantDto,
-  ): Promise<boolean> {
-    try {
-      await this.restaurantService.updateRestaurant(updateRestaurantDto);
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    return this.restaurantService.createRestaurant(
+      authUser['user'].id,
+      createRestauranInput,
+    );
   }
 }
