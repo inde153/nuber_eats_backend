@@ -11,10 +11,10 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
-enum UserRole {
-  Owner,
-  Client,
-  Delivery,
+export enum UserRole {
+  Owner = 'OWNER',
+  Client = 'CLIENT',
+  Delivery = 'DELIVERY',
 }
 
 registerEnumType(UserRole, { name: 'UserRole' });
