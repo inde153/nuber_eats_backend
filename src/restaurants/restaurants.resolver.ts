@@ -28,7 +28,7 @@ export class RestaurantResolver {
     //async 사용시 타입 옆에 Promise 필요
 
     return this.restaurantService.createRestaurant(
-      authUser['user'].id,
+      authUser,
       createRestauranInput,
     );
   }

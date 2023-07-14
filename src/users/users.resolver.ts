@@ -20,7 +20,6 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation((returns) => CreateAccountOutput)
-  @Role(['Delivery'])
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {

@@ -5,7 +5,7 @@ import { AuthGuard } from './auth.guard';
 @Module({
   providers: [
     {
-      provide: APP_GUARD,
+      provide: APP_GUARD, //guard들을 APP_GUARD가 nest 에 전체적으로 적용 시킴
       useClass: AuthGuard,
     },
   ],

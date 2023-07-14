@@ -6,11 +6,11 @@ import { AllowedRoles } from './role.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {} //Reflector는 metadata를 get한다.
   //nest js의 ExecutionContext 다
   canActivate(context: ExecutionContext) {
     const roles = this.reflector.get<AllowedRoles>(
-      'roles',
+      'roles', //@Role 데코레이터에서 roles라는 키를 가져온다.
       context.getHandler(),
     );
     if (!roles) {
