@@ -19,8 +19,8 @@ export class RestaurantResolver {
   /** 레스토랑 생성
    * @param createRestauranInput
    */
-  @Role(['Owner'])
   @Mutation((returns) => CreateRestauranOutput)
+  @Role(['Owner'])
   async createRestaurant(
     @AuthUser() authUser: User,
     @Args('input') createRestauranInput: CreateRestauranInput,

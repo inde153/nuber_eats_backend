@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Role } from 'src/auth/role.decorator';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -19,6 +20,7 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation((returns) => CreateAccountOutput)
+  @Role(['Delivery'])
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
@@ -34,6 +36,7 @@ export class UserResolver {
   // 에러 해결 방법은 https://darrengwon.tistory.com/969 Entity파일의 @InputType({ isAbstract: true }) 설정
   @Query((returns) => User)
   //guard가 graphql context를 찾는다.
+  @Role(['Any'])
   @UseGuards(AuthGuard) //true,false를 리턴해야 한다. 함수의 이름은 canActivate
   me(@AuthUser() authUser: User) {
     // 데코레이터는 value를 return한다.
@@ -43,6 +46,7 @@ export class UserResolver {
   // hi(): boolean {
   //   return true;
   // }
+  @Role(['Any'])
   @UseGuards(AuthGuard)
   @Query((returns) => UserProfileOutput)
   async userProfile(
@@ -51,7 +55,7 @@ export class UserResolver {
     return this.userService.findById(userProfileInput.userId);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Mutation((returns) => EditProfileOutput)
   async editProfile(
     @AuthUser() authUser: User,
