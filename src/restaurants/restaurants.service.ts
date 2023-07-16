@@ -19,7 +19,7 @@ export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant) // repository 주입
     private readonly restaurants: Repository<Restaurant>,
-    @InjectRepository(Category) //
+    @InjectRepository(CategoryRepository) //
     private readonly categories: CategoryRepository,
   ) {}
 
@@ -63,7 +63,7 @@ export class RestaurantService {
     editRestaurantInput: EditRestaurantInput,
   ): Promise<EditRestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOneOrFail({
+      const restaurant = await this.restaurants.findOne({
         where: { id: editRestaurantInput.restaurantId },
       });
       if (!restaurant) {
@@ -79,6 +79,8 @@ export class RestaurantService {
         };
       }
       let category: Category = null;
+
+      //카테고리가 있으면 있는지 확인하고 카테고리 테이블에 추가
       if (editRestaurantInput.categoryName) {
         category = await this.categories.getOrCreate(
           editRestaurantInput.categoryName,
@@ -95,6 +97,7 @@ export class RestaurantService {
         ok: true,
       };
     } catch (err) {
+      console.log(err);
       return {
         ok: false,
         error: 'Could not edit Restaurant',
