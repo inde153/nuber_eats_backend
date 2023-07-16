@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
+import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import {
   CreateRestauranInput,
   CreateRestauranOutput,
@@ -136,5 +138,20 @@ export class RestaurantService {
     return {
       ok: true,
     };
+  }
+
+  async allCategories(): Promise<AllCategoriesOutput> {
+    try {
+      const categories = await this.categories.find();
+      return {
+        ok: true,
+        categories,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load Categories',
+      };
+    }
   }
 }

@@ -1,5 +1,12 @@
 import { SetMetadata } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { User, UserRole } from 'src/users/entities/users.entity';
 import { Role } from 'src/auth/role.decorator';
@@ -17,6 +24,8 @@ import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
 } from './dtos/delete-restaurant.dto';
+import { Category } from './entities/category.entity';
+import { AllCategoriesOutput } from './dtos/all-categories.dto';
 
 //resolver 선 실행 후 service
 @Resolver((of) => Restaurant)
@@ -60,5 +69,20 @@ export class RestaurantResolver {
       owner,
       deleteRestaurantInput,
     );
+  }
+}
+
+@Resolver((of) => Category)
+export class categoryResolver {
+  constructor(private readonly restaurantService: RestaurantService) {}
+
+  @ResolveField((type) => Int) //매 요청마다 계산된 필드를 만들어준다.
+  restaurantCount(): number {
+    return 80;
+  }
+
+  @Query((type) => AllCategoriesOutput)
+  allCategories(): Promise<AllCategoriesOutput> {
+    return this.restaurantService.allCategories();
   }
 }
