@@ -154,4 +154,15 @@ export class RestaurantService {
       };
     }
   }
+
+  countRestaurants(category: Category) {
+    //카운트 카테고리의 아이디 카테고리 아이디
+    return this.restaurants.count({
+      where: {
+        category: {
+          id: category.id,
+        },
+      },
+    });
+  }
 }
