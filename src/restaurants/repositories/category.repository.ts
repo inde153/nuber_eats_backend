@@ -5,6 +5,7 @@ import { Category } from '../entities/category.entity';
 @Injectable()
 export class CategoryRepository extends Repository<Category> {
   constructor(private dataSource: DataSource) {
+    // dataSource라는 TypeORM의 소스를 가져와 사용
     super(Category, dataSource.createEntityManager());
   }
   async getOrCreate(name: string): Promise<Category> {

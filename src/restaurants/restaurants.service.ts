@@ -7,6 +7,10 @@ import {
   CreateRestauranOutput,
 } from './dtos/create-restaurant.dto';
 import {
+  DeleteRestaurantInput,
+  DeleteRestaurantOutput,
+} from './dtos/delete-restaurant.dto';
+import {
   EditRestaurantInput,
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
@@ -63,21 +67,7 @@ export class RestaurantService {
     editRestaurantInput: EditRestaurantInput,
   ): Promise<EditRestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOne({
-        where: { id: editRestaurantInput.restaurantId },
-      });
-      if (!restaurant) {
-        return {
-          ok: false,
-          error: 'Restaurant not found',
-        };
-      }
-      if (owner.id !== restaurant.ownerId) {
-        return {
-          ok: false,
-          error: "You can't deit a restaurant that you don't owner",
-        };
-      }
+      await this.getRestaurant(owner.id, editRestaurantInput.restaurantId);
       let category: Category = null;
 
       //카테고리가 있으면 있는지 확인하고 카테고리 테이블에 추가
@@ -103,5 +93,48 @@ export class RestaurantService {
         error: 'Could not edit Restaurant',
       };
     }
+  }
+
+  async deleteRestaurantInput(
+    owner: User,
+    deleteRestaurantInput: DeleteRestaurantInput,
+  ): Promise<DeleteRestaurantOutput> {
+    try {
+      const restaurant = await this.getRestaurant(
+        owner.id,
+        deleteRestaurantInput.restaurantId,
+      );
+      if (!restaurant.ok) throw new Error('');
+      await this.restaurants.delete(deleteRestaurantInput.restaurantId);
+      return {
+        ok: true,
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        error: 'Could not delete restaurant',
+      };
+    }
+  }
+
+  async getRestaurant(ownerId: number, restaurantId: number) {
+    const restaurant = await this.restaurants.findOne({
+      where: { id: restaurantId },
+    });
+    if (!restaurant) {
+      return {
+        ok: false,
+        error: 'Restaurant not found',
+      };
+    }
+    if (ownerId !== restaurant.ownerId) {
+      return {
+        ok: false,
+        error: "You can't deit a restaurant that you don't owner",
+      };
+    }
+    return {
+      ok: true,
+    };
   }
 }
