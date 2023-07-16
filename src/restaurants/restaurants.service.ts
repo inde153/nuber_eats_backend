@@ -41,15 +41,9 @@ export class RestaurantService {
       const categoryName = createRestauranInput.categoryName
         .trim()
         .toLowerCase();
-      const categorySlug = categoryName.replace(/ /g, '-');
-      let category = await this.categories.findOne({
-        where: { slug: categorySlug },
-      });
-      if (!category) {
-        category = await this.categories.save(
-          this.categories.create({ slug: categorySlug, name: categoryName }),
-        );
-      }
+      const category = await this.getOrCreateCategory(
+        createRestauranInput.categoryName,
+      );
       newRestaurant.category = category;
       await this.restaurants.save(newRestaurant);
       return {
@@ -63,8 +57,48 @@ export class RestaurantService {
     }
   }
 
+  async getOrCreateCategory(name: string): Promise<Category> {
+    const categoryName = name.trim().toLowerCase();
+    const categorySlug = categoryName.replace(/ /g, '-');
+    let category = await this.categories.findOne({
+      where: { slug: categorySlug },
+    });
+    if (!category) {
+      category = await this.categories.save(
+        this.categories.create({ slug: categorySlug, name: categoryName }),
+      );
+    }
+    return category;
+  }
+
   async editRestaurant(
     owner: User,
     editRestaurantInput: EditRestaurantInput,
-  ): Promise<EditRestaurantOutput> {}
+  ): Promise<EditRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOneOrFail({
+        where: { id: editRestaurantInput.restaurantId },
+      });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't deit a restaurant that you don't owner",
+        };
+      }
+      return {
+        ok: true,
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        error: 'Could not edit Restaurant',
+      };
+    }
+  }
 }
