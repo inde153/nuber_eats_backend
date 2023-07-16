@@ -9,6 +9,10 @@ import {
 } from './dtos/create-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
+import {
+  EditRestaurantInput,
+  EditRestaurantOutput,
+} from './dtos/edit-restaurant.dto';
 
 //resolver 선 실행 후 service
 @Resolver((of) => Restaurant)
@@ -31,5 +35,16 @@ export class RestaurantResolver {
       authUser,
       createRestauranInput,
     );
+  }
+
+  @Mutation((returns) => EditRestaurantOutput)
+  @Role(['Owner'])
+  editRestaurant(
+    @AuthUser() authUser: User,
+    @Args('input') editRestaurantInput: EditRestaurantInput,
+  ): EditRestaurantOutput {
+    return {
+      ok: true,
+    };
   }
 }
