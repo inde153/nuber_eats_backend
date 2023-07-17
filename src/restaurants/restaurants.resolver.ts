@@ -28,6 +28,7 @@ import {
 import { Category } from './entities/category.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 
 //resolver 선 실행 후 service
 @Resolver((of) => Restaurant)
@@ -72,6 +73,13 @@ export class RestaurantResolver {
       deleteRestaurantInput,
     );
   }
+
+  @Query((returns) => RestaurantsOutput)
+  restaurants(
+    @Args('input') restaurantsInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantService.allRestaurants(restaurantsInput);
+  }
 }
 
 @Resolver((of) => Category)
@@ -92,7 +100,6 @@ export class categoryResolver {
   category(
     @Args('input') categoryInput: CategoryInput,
   ): Promise<CategoryOutput> {
-    console.log(categoryInput);
     return this.restaurantService.findCategoryBySlug(categoryInput);
   }
 }
