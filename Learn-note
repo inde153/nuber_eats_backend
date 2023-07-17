@@ -1,0 +1,5 @@
+curl -X POST -H "Content-Type: application/json" -d '{
+"query": "query { restaurants(input: {}) { error ok totalPages totalResults results { name id } } }"
+}' http://localhost:3000/graphql
+
+그래프 큐엘 Get방식

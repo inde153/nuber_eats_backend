@@ -207,7 +207,7 @@ export class RestaurantService {
 
   async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
     try {
-      console.log(123123, page);
+      //첫번째 인덱스 두 번째 인덱스 저장 방식
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         skip: (page - 1) * 25,
         take: 25,
