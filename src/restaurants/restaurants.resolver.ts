@@ -29,6 +29,7 @@ import { Category } from './entities/category.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
 
 //resolver 선 실행 후 service
 @Resolver((of) => Restaurant)
@@ -79,6 +80,13 @@ export class RestaurantResolver {
     @Args('input') restaurantsInput: RestaurantsInput,
   ): Promise<RestaurantsOutput> {
     return this.restaurantService.allRestaurants(restaurantsInput);
+  }
+
+  @Query((returns) => RestaurantOutput)
+  restaurant(
+    @Args('input') restaurantInput: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    return this.restaurantService.findRestaurantById(restaurantInput);
   }
 }
 
