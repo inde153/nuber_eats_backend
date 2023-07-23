@@ -329,9 +329,40 @@ export class RestaurantService {
     owner: User,
     editDishInput: EditDishInput,
   ): Promise<EditDishOutput> {
-    return {
-      ok: false,
-    };
+    try {
+      const dish = await this.dishes.findOne({
+        where: { id: editDishInput.dishId },
+        relations: ['restaurant'],
+      });
+
+      if (!dish) {
+        return {
+          ok: false,
+          error: 'Dish not found',
+        };
+      }
+
+      if (dish.restaurant.ownerId !== owner.id) {
+        return {
+          ok: false,
+          error: "You can't do that.",
+        };
+      }
+      await this.dishes.save([
+        {
+          id: editDishInput.dishId,
+          ...editDishInput,
+        },
+      ]);
+      return {
+        ok: true,
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        error: 'Could not delete dish',
+      };
+    }
   }
 
   async deleteDish(
@@ -358,6 +389,9 @@ export class RestaurantService {
         };
       }
       await this.dishes.delete(dishId);
+      return {
+        ok: true,
+      };
     } catch (err) {
       return {
         ok: false,
@@ -365,4 +399,6 @@ export class RestaurantService {
       };
     }
   }
+
+  checkDishOwner(ownerId: number, dishId: number) {} //restaurant Check 메소드 처럼 만들어서 delete와 edit에서 사용하기
 }
