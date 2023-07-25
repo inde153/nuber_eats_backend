@@ -21,7 +21,7 @@ export enum OrderStatus {
 
 registerEnumType(OrderStatus, { name: 'OrderStatus' });
 /**ObjectType(자동으로 스키마를 빌드하기 위해 사용하는 GraphQL 데코레이터)*/
-@InputType('RestaurantInputType', { isAbstract: true })
+@InputType('OrderInputType', { isAbstract: true })
 @ObjectType() // <- GraphQL
 @Entity() // <- TypeORM
 export class Order extends CoreEntity {
@@ -51,9 +51,9 @@ export class Order extends CoreEntity {
   @JoinColumn()
   dishes: Dish[];
 
-  @Column()
-  @Field((type) => Float)
-  total: number;
+  @Column({ nullable: true })
+  @Field((type) => Float, { nullable: true })
+  total?: number;
 
   @Column({ type: 'enum', enum: OrderStatus })
   @Field((type) => OrderStatus)
