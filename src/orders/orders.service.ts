@@ -99,6 +99,7 @@ export class OrderService {
     { status }: GetOrdersInput,
   ): Promise<GetOrdersOutput> {
     try {
+      console.log(user, status);
       let orders: Order[];
       if (user.role === UserRole.Client) {
         orders = await this.orders.find({
@@ -106,6 +107,7 @@ export class OrderService {
             customer: {
               id: user.id,
             },
+            status: status, //상태가 존재하지 않는다면 조건이 들어가지 않는다.
           },
         });
         console.log(123, orders);
@@ -115,6 +117,7 @@ export class OrderService {
             driver: {
               id: user.id,
             },
+            status: status,
           },
         });
         console.log(1234, orders);
@@ -127,8 +130,9 @@ export class OrderService {
           },
           relations: ['orders'],
         });
-        console.log(restaurants);
-        orders = restaurants.map((ele) => ele.orders).flat(1);
+        orders = restaurants.flatMap((restaurant) =>
+          restaurant.orders.filter((order) => order.status === status),
+        );
       }
       return {
         ok: true,
