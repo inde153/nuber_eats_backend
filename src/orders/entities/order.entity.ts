@@ -9,7 +9,14 @@ import { IsEnum, IsNumber, isNumber, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/users.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  RelationId,
+} from 'typeorm';
 import { OrderItem } from './order-item.entity';
 
 export enum OrderStatus {
@@ -32,12 +39,19 @@ export class Order extends CoreEntity {
   })
   customer?: User;
 
+  // 이와 같이 릴레이션 할 때 ID를 임의적으로 생성할 수 있음
+  @RelationId((order: Order) => order.customer)
+  customerId: number;
+
   @Field((type) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   driver?: User;
+
+  @RelationId((order: Order) => order.driver)
+  driverId: number;
 
   @Field((type) => Restaurant)
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
