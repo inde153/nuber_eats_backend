@@ -33,7 +33,10 @@ export class MailService {
         body: formData,
       });
     } catch (err) {
-      console.log(err);
+      return {
+        ok: false,
+        error: "can't send mail",
+      };
     }
   }
 
