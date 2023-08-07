@@ -10,7 +10,7 @@ export class MailService {
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
 
-  private async sendEmail(
+  async sendEmail(
     subject: string,
     to: string = 'inde456@naver.com',
     templateName: string = 'verify_email',
@@ -38,6 +38,7 @@ export class MailService {
         error: "can't send mail",
       };
     }
+    return true;
   }
 
   sendVerificationEmail(email: string, code: string) {
