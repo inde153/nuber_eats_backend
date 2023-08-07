@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { MailService } from './mail.service';
+import got from 'got';
+import * as FormData from 'form-data';
 
-jest.mock('got', () => {});
-jest.mock('form-data', () => {
-  return {
-    append: jest.fn(),
-  };
-});
+jest.mock('got');
+jest.mock('form-data');
+
+const TEST_DOMAIN = 'test-domain';
 
 describe('MailService', () => {
   let service: MailService;
@@ -20,7 +20,7 @@ describe('MailService', () => {
           provide: CONFIG_OPTIONS,
           useValue: {
             apiKey: 'test-apiKey',
-            domain: 'test-domain',
+            domain: TEST_DOMAIN,
             fromEmail: 'test-fromEmail',
           },
         },
@@ -34,7 +34,7 @@ describe('MailService', () => {
   });
 
   describe('sendVerificationEmail', () => {
-    it('should call sendEmail', () => {
+    it('should call sendEmail', async () => {
       const sendVerificationEmailArgs = {
         email: 'email',
         code: 'code',
@@ -47,7 +47,8 @@ describe('MailService', () => {
       expect(service.sendEmail).toHaveBeenCalledTimes(1);
       expect(service.sendEmail).toHaveBeenCalledWith(
         'Verify Your Email',
-        'verify-email',
+        'inde456@naver.com',
+        'verify_email',
         [
           { key: 'code', value: sendVerificationEmailArgs.code },
           { key: 'username', value: sendVerificationEmailArgs.email },
@@ -55,5 +56,29 @@ describe('MailService', () => {
       );
     });
   });
-  it.todo('sendVerificationEmail');
+  describe('sendEmail', () => {
+    it('sends Email', async () => {
+      const ok = await service.sendEmail('Verify Your Email', '', '', [
+        { key: 'one', value: '1' },
+      ]);
+      const formSpy = jest.spyOn(FormData.prototype, 'append');
+      expect(formSpy).toHaveBeenCalled();
+      expect(formSpy).toHaveBeenCalledTimes(5);
+      expect(got.post).toHaveBeenCalledTimes(1);
+      expect(got.post).toHaveBeenCalledWith(
+        `https://api.mailgun.net/v3/${TEST_DOMAIN}/messages`,
+        expect.any(Object),
+      );
+      expect(ok).toEqual(true);
+    });
+    it('fails on error', async () => {
+      jest.spyOn(got, 'post').mockImplementation(() => {
+        throw new Error();
+      });
+      const ok = await service.sendEmail('Verify Your Email', '', '', [
+        { key: 'one', value: '1' },
+      ]);
+      expect(ok).toEqual(false);
+    });
+  });
 });

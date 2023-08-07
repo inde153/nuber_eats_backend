@@ -15,7 +15,7 @@ export class MailService {
     to: string = 'inde456@naver.com',
     templateName: string = 'verify_email',
     emailVars: EmailVars[],
-  ) {
+  ): Promise<boolean> {
     const formData = new FormData();
     formData.append('from', `Nuber eats<mailgun@${this.options.domain}`);
     formData.append('to', to);
@@ -23,20 +23,20 @@ export class MailService {
     formData.append('template', templateName);
     emailVars.forEach((ele) => formData.append(`v:${ele.key}`, ele.value));
     try {
-      await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `api:${this.options.apiKey}`,
-          ).toString('base64')}`,
+      await got.post(
+        `https://api.mailgun.net/v3/${this.options.domain}/messages`,
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `api:${this.options.apiKey}`,
+            ).toString('base64')}`,
+          },
+          body: formData,
         },
-        method: 'POST',
-        body: formData,
-      });
+      );
+      return true;
     } catch (err) {
-      return {
-        ok: false,
-        error: "can't send mail",
-      };
+      return false;
     }
     return true;
   }
