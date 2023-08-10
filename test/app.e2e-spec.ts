@@ -4,6 +4,8 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { DataSource } from 'typeorm';
 
+const GRAPHQL_ENDPOINT = `/graphql`;
+
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
 
@@ -33,5 +35,30 @@ describe('UserModule (e2e)', () => {
     await app.close();
   });
 
-  it.todo('me');
+  describe('createAccount', () => {
+    const EMAIL = 'inde456@naver.com';
+    it(`should create account`, () => {
+      const a = request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation : {
+            CreateAccount(input:{
+              email:"${EMAIL}",
+              password:"12345",
+              role:"Owner"
+            })  {
+              ok,
+              error
+            }
+          }`,
+          // variables: createAccountInput,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.createAccount.ok).toBe(true);
+          expect(res.body.data.createAccount.error).toBe(null);
+        });
+    });
+  });
 });

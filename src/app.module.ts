@@ -55,8 +55,8 @@ import { OrderItem } from './orders/entities/order-item.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: true,
-      // entities: [Restaurant],
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [
         User,
         Verification,
