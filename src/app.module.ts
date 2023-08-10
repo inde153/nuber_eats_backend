@@ -35,7 +35,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       //환경변수 밸리데이션
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
