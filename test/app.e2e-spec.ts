@@ -4,10 +4,23 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { DataSource } from 'typeorm';
 
+jest.mock('got', () => {
+  return {
+    post: jest.fn(),
+  };
+});
 const GRAPHQL_ENDPOINT = `/graphql`;
+
+const testUser = {
+  email: 'nico@las.com',
+  password: '12345',
+};
 
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
+
+  const baseTest = () => request(app.getHttpServer()).post(GRAPHQL_ENDPOINT);
+  const publicTest = (query: string) => baseTest().send({ query });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,28 +49,50 @@ describe('UserModule (e2e)', () => {
   });
 
   describe('createAccount', () => {
-    const EMAIL = 'inde456@naver.com';
-    it(`should create account`, () => {
-      const a = request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `
-          mutation : {
-            CreateAccount(input:{
-              email:"${EMAIL}",
-              password:"12345",
-              role:"Owner"
-            })  {
-              ok,
-              error
-            }
-          }`,
-          // variables: createAccountInput,
-        })
+    it('should create account', () => {
+      return publicTest(`
+        mutation {
+          createAccount(input: {
+            email:"${testUser.email}",
+            password:"${testUser.password}",
+            role:Owner
+          }) {
+            ok
+            error
+          }
+        }
+        `)
         .expect(200)
         .expect((res) => {
           expect(res.body.data.createAccount.ok).toBe(true);
           expect(res.body.data.createAccount.error).toBe(null);
+        });
+    });
+
+    it('should fail if account already exists', () => {
+      return publicTest(`
+          mutation {
+            createAccount(input: {
+              email:"${testUser.email}",
+              password:"${testUser.password}",
+              role:Owner
+            }) {
+              ok
+              error
+            }
+          }
+        `)
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                createAccount: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(false);
+          expect(error).toBe('There is a user with that email already');
         });
     });
   });
