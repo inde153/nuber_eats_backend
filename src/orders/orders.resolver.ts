@@ -52,8 +52,18 @@ export class OrderResolver {
     return this.ordersService.editOrder(user, editOrderInput);
   }
 
+  @Mutation((returns) => Boolean)
+  potatoReady() {
+    //트리거의 이름과 publish하는 이름은 같아야한다.
+    pubsub.publish('hotPotatos', {
+      //payload는 객체여야 한다. mutation f와 일므이 같으면된다.
+      readyPotatos: ' Your potato is ready. love you',
+    });
+    return true;
+  }
+
   @Subscription((returns) => String)
-  hotPotatos() {
+  readyPotatos() {
     return pubsub.asyncIterator('hotPotatos');
   }
 }

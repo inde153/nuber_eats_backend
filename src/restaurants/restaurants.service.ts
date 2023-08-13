@@ -246,8 +246,6 @@ export class RestaurantService {
         relations: ['menu'],
       });
 
-      console.log(restaurant);
-
       if (!restaurant) return { ok: false, error: 'Restaurant not found' };
 
       return {
