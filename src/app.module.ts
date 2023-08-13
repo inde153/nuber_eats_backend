@@ -85,6 +85,12 @@ import { OrderItem } from './orders/entities/order-item.entity';
       context: ({ req }) => {
         return { token: req.headers['x-jwt'] };
       },
+
+      //레거시
+      // context: ({ req, connection }) => {
+      //   console.log(connection);
+      //   if (req) return { user: req['user'] };
+      // },
     }),
     // RestaurantsModule,
     JwtModule.forRoot({
