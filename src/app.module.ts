@@ -75,9 +75,15 @@ import { OrderItem } from './orders/entities/order-item.entity';
       //apollo server나 graphql의 context는 모든 resolver에 정보를 보낼 수 있는 프로퍼티다.
       //context에서 함수를 만들면 request object를 준다.
       //jwtmiddleware를 거치고 오브젝트를 보낸다.
-      context: ({ req, connection }) => {
-        console.log(connection);
-        if (req) return { user: req['user'] };
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams) => {
+            return { token: connectionParams['x-jwt'] };
+          },
+        },
+      },
+      context: ({ req }) => {
+        return { token: req.headers['x-jwt'] };
       },
     }),
     // RestaurantsModule,
