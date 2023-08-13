@@ -98,14 +98,15 @@ import { OrderItem } from './orders/entities/order-item.entity';
   // controllers: [],
   // providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(jwtMiddleware).forRoutes({
-      path: '/graphql',
-      method: RequestMethod.POST,
-    });
-    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
-  }
-}
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(jwtMiddleware).forRoutes({
+//       path: '/graphql',
+//       method: RequestMethod.POST,
+//     });
+//     consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+//   }
+// }
 
 //forRoutes 대신 exclude 는 특정 경로만 막을 때
+export class AppModule {}
