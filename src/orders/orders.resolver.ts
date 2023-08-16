@@ -60,7 +60,7 @@ export class OrderResolver {
   async potatoReady(@Args('potatoId') potatoId: number) {
     //트리거의 이름과 publish하는 이름은 같아야한다.
     await this.pubSub.publish('hotPotatos', {
-      //payload는 객체여야 한다. mutation f와 일므이 같으면된다.
+      //payload는 객체여야 한다. Subscription 함수와 이름이 같으면된다.
       readyPotato: potatoId,
     });
     return true;
@@ -72,7 +72,7 @@ export class OrderResolver {
     },
   })
   @Role(['Any'])
-  readyPotatos(@Args('potatoId') potatoId: number) {
+  readyPotato(@Args('potatoId') potatoId: number) {
     return this.pubSub.asyncIterator('hotPotatos');
   }
 }
