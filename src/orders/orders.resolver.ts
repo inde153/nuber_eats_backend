@@ -57,18 +57,24 @@ export class OrderResolver {
   }
 
   @Mutation((returns) => Boolean)
-  potatoReady() {
+  async potatoReady(@Args('potatoId') potatoId: number) {
     //트리거의 이름과 publish하는 이름은 같아야한다.
-    this.pubSub.publish('hotPotatos', {
+    await this.pubSub.publish('hotPotatos', {
       //payload는 객체여야 한다. mutation f와 일므이 같으면된다.
-      readyPotatos: ' Your potato is ready. love you',
+      readyPotato: potatoId,
     });
     return true;
   }
 
-  @Subscription((returns) => String)
+  @Subscription((returns) => String, {
+    filter: ({ readyPotato }, { potatoId }) => {
+      return readyPotato === potatoId;
+    },
+  })
   @Role(['Any'])
-  readyPotatos(@AuthUser() user: User) {
+  readyPotatos(@Args('potatoId') potatoId: number) {
     return this.pubSub.asyncIterator('hotPotatos');
   }
 }
+
+// 만약 potatoReady, readyPotatos가 동일한 Args를 받는다면 filter를 해줘야 함
