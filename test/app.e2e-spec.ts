@@ -276,4 +276,5 @@ describe('UserModule (e2e)', () => {
         });
     });
   });
+  describe('send mail', () => {});
 });
