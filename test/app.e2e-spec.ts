@@ -5,6 +5,7 @@ import { AppModule } from './../src/app.module';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/users.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { async } from 'rxjs';
 
 jest.mock('got', () => {
   return {
@@ -276,5 +277,36 @@ describe('UserModule (e2e)', () => {
         });
     });
   });
-  describe('send mail', () => {});
+  describe('editProfile', () => {
+    const NEW_EMAIL = 'nico@new.com';
+    it('should change email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+            mutation {
+              editProfile(input:{
+                email: "${NEW_EMAIL}"
+              }) {
+                ok
+                error
+              }
+            }
+        `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+  });
 });
