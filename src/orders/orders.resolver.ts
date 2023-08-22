@@ -67,10 +67,16 @@ export class OrderResolver {
   }
 
   @Subscription((returns) => String, {
+    //유저가 알람을 받을지 말지 결정
     filter: ({ readyPotato }, { potatoId }) => {
       return readyPotato === potatoId;
     },
+    //subscription의 output 모습 변경
+    // resolver함수가 리턴하는 값은 pubsub.asyncIterator()를 통해 받는 값이 됩니다. publish한 event payload를 변형하려면 resolve 속성을 함수로 설정합니다. 함수는 이벤트 payload를 수신하고 적절한 값을 반환합니다.
+    resolve: ({ readyPotato }) =>
+      `Your potato with the id ${readyPotato} is ready!`,
   })
+  //listening
   @Role(['Any'])
   readyPotato(@Args('potatoId') potatoId: number) {
     return this.pubSub.asyncIterator('hotPotatos');
