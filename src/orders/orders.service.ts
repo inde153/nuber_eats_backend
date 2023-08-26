@@ -2,11 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { options } from 'joi';
-import {
-  NEW_COOKED_ORDER,
-  NEW_PENDING_ORDER,
-  PUB_SUB,
-} from 'src/common/common.constants';
+import { NEW_PENDING_ORDER, PUB_SUB } from 'src/common/common.constants';
 import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User, UserRole } from 'src/users/entities/users.entity';
@@ -210,9 +206,11 @@ export class OrderService {
     try {
       const order = await this.orders.findOne({
         where: { id: orderId },
-        relations: ['restaurant'],
+        relations: ['restaurant', 'customer', 'driver'],
       });
-
+      //eager relation은 DB에서 entity를 load할 때마다 자동으로 load되는 relationship을 말한다.(열렬한!)
+      //lazy relations은 한 번 access하면 load된다.<promise 타입>(게으른)
+      // await order.customer;lazy
       if (!order) return { ok: false, error: 'Order not found' };
 
       if (!this.canSeeOrder(user, order))
@@ -244,15 +242,6 @@ export class OrderService {
         id: orderId,
         status,
       });
-
-      if (user.role === UserRole.Owner) {
-        if (status === OrderStatus.Cooked) {
-          await this.pubSub.publish(NEW_COOKED_ORDER, {
-            cookedOrders: { ...order, status },
-          });
-        }
-      }
-
       return {
         ok: true,
       };
