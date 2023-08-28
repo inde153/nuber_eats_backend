@@ -75,12 +75,21 @@ export class OrderResolver {
   }
 
   @Subscription((returns) => Order)
+  //필터 쓰지 않는 이유는 모든 배달기사들이 배달 할 수 있는 음식들을 알 수 있도록
   @Role(['Delivery'])
   cookedOrders() {
     return this.pubSub.asyncIterator(NEW_COOKED_ORDER);
   }
 
-  @Subscription((returns) => Order)
+  @Subscription((returns) => Order, {
+    filter: (
+      { orderUpdates: order }: { orderUpdates: Order },
+      { input }: { input: OrderUpdatesInput },
+      { user: User },
+    ) => {
+      return order.id === input.id;
+    },
+  })
   @Role(['Any'])
   orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
     return this.pubSub.asyncIterator(NEW_ORDER_UPDATE);
