@@ -28,6 +28,8 @@ describe('UserModule (e2e)', () => {
 
   const baseTest = () => request(app.getHttpServer()).post(GRAPHQL_ENDPOINT);
   const publicTest = (query: string) => baseTest().send({ query });
+  const privateTest = (query: string) =>
+    baseTest().set('X-JWT', jwtToken).send({ query });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -169,22 +171,17 @@ describe('UserModule (e2e)', () => {
       userId = user.id;
     });
     it("should see a user's profile", () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set(`X-JWT`, jwtToken)
-        .send({
-          query: `
-      {
-        userProfile(userId:${userId}){
-          ok
-          error
-          user{
-            id
+      return privateTest(`
+        {
+          userProfile(userId:${userId}){
+            ok
+            error
+            user{
+              id
+            }
           }
         }
-      }
-      `,
-        })
+      `)
         .expect(200)
         .expect((res) => {
           const {
@@ -204,11 +201,7 @@ describe('UserModule (e2e)', () => {
         });
     });
     it('should not find a profile', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set(`X-JWT`, jwtToken)
-        .send({
-          query: `
+      return privateTest(`
     {
       userProfile(userId:666){
         ok
@@ -218,8 +211,7 @@ describe('UserModule (e2e)', () => {
         }
       }
     }
-    `,
-        })
+    `)
         .expect(200)
         .expect((res) => {
           const {
@@ -238,17 +230,12 @@ describe('UserModule (e2e)', () => {
 
   describe('me', () => {
     it('should find my profile', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('X-JWT', jwtToken)
-        .send({
-          query: `
+      return privateTest(`
           {
             me{
               email
             }
-          }`,
-        })
+          }`)
         .expect(200)
         .expect((res) => {
           const {
@@ -262,16 +249,13 @@ describe('UserModule (e2e)', () => {
         });
     });
     it('should not allow logged out user', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `
-        {
-          me{
-            email
+      return publicTest(`
+          {
+            me {
+              email
+            }
           }
-        }`,
-        })
+        `)
         .expect(200)
         .expect((res) => {
           const {
@@ -285,11 +269,7 @@ describe('UserModule (e2e)', () => {
   describe('editProfile', () => {
     const NEW_EMAIL = 'nico@new.com';
     it('should change email', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('X-JWT', jwtToken)
-        .send({
-          query: `
+      return privateTest(`
             mutation {
               editProfile(input:{
                 email: "${NEW_EMAIL}"
@@ -298,8 +278,7 @@ describe('UserModule (e2e)', () => {
                 error
               }
             }
-        `,
-        })
+        `)
         .expect(200)
         .expect((res) => {
           const {
@@ -314,18 +293,13 @@ describe('UserModule (e2e)', () => {
         });
     });
     it('should have new email', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('X-JWT', jwtToken)
-        .send({
-          query: `
+      return privateTest(`
           {
             me {
               email
             }
           }
-        `,
-        })
+        `)
         .expect(200)
         .expect((res) => {
           const {
