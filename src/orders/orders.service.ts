@@ -16,6 +16,7 @@ import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
+import { TakeOrderInput, TakeOrderOutput } from './dtos/take-order.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { Order, OrderStatus } from './entities/order.entity';
 
@@ -269,4 +270,9 @@ export class OrderService {
       };
     }
   }
+
+  async takeOrder(
+    driver: User,
+    takeOrderInput: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {}
 }
