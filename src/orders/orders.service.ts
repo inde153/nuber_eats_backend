@@ -225,6 +225,7 @@ export class OrderService {
           ok: false,
           error: "Can't see this",
         };
+
       let canEdit = true;
 
       if (user.role === UserRole.Client) {
@@ -243,6 +244,7 @@ export class OrderService {
           canEdit = false;
         }
       }
+
       if (!canEdit) return { ok: false, error: "You can't do that." };
 
       await this.orders.save({
@@ -273,6 +275,34 @@ export class OrderService {
 
   async takeOrder(
     driver: User,
-    takeOrderInput: TakeOrderInput,
-  ): Promise<TakeOrderOutput> {}
+    { id: orderId }: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    try {
+      const order = await this.orders.findOne({ where: { id: orderId } });
+      //eager relationship으로 order가 전부 로드 됨
+
+      if (!order) return { ok: false, error: 'Order not found' };
+
+      if (order.driver)
+        return { ok: false, error: 'this order already has a driver' };
+
+      await this.orders.save({
+        id: orderId,
+        driver,
+      });
+
+      await this.pubSub.publish(NEW_ORDER_UPDATE, {
+        orderUpdates: { ...order, driver },
+      });
+
+      return {
+        ok: true,
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        error: 'Could not update order',
+      };
+    }
+  }
 }
