@@ -26,6 +26,7 @@ import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { PaymentsModule } from './payments/payments.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     // 그래프QL 스키마가 하나도 없는 경우 Query root type must be provided 에러 발생 주석처리 필요
