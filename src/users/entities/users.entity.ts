@@ -55,7 +55,7 @@ export class User extends CoreEntity {
   orders: Order[];
 
   @Field((type) => [Payment])
-  @OneToMany((type) => Order, (payment) => payment.customer)
+  @OneToMany((type) => Payment, (payment) => payment.user)
   payments: Order[];
 
   @Field((type) => [Order])
