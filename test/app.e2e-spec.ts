@@ -5,7 +5,6 @@ import { AppModule } from './../src/app.module';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/users.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { async } from 'rxjs';
 import { Verification } from 'src/users/entities/verification.entity';
 
 jest.mock('got', () => {
